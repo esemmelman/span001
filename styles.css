@@ -80,14 +80,14 @@ button { font: inherit; }
   align-items: start;
   display: grid;
   column-gap: 90px;
-  grid-template-columns: minmax(300px, 340px) minmax(600px, 760px) minmax(300px, 340px);
-  width: min(100%, 1580px);
+  grid-template-columns: minmax(400px, 440px) minmax(600px, 760px) minmax(400px, 440px);
+  width: min(100%, 1820px);
 }
 
 .app-shell::after { content: ""; }
 .remember-column {
   grid-column: 1;
-  left: -70px;
+  left: -30px;
   position: relative;
 }
 
@@ -321,6 +321,7 @@ h1 {
   line-height: 1.25;
   margin: 17px 0;
   padding-left: 8px;
+  white-space: nowrap;
 }
 
 .soy-rule li::marker { color: var(--coral); }
@@ -338,17 +339,18 @@ h1 {
   .rule-group + .rule-group { margin-top: 24px; }
 }
 
-@media (min-width: 561px) and (max-width: 1239px) {
+@media (min-width: 561px) and (max-width: 1399px) {
   .rule-group { display: inline-block; vertical-align: top; width: 49%; }
   .rule-group + .rule-group { margin-top: 0; }
 }
 
-@media (max-width: 1239px) {
+@media (max-width: 1399px) {
   .app-shell { grid-template-columns: 1fr; row-gap: 48px; width: min(100%, 760px); }
   .app-shell::after { display: none; }
   .remember-column, .quiz-card { grid-column: 1; }
   .remember-column { left: 0; }
   .quiz-card { left: 0; }
+  .rule-group li { white-space: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) {
