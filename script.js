@@ -1,4 +1,4 @@
-const questionBank = [
+const legacyQuestionBank = [
   {
     id: 1,
     prompt: '“I am a student.”',
@@ -301,6 +301,70 @@ const questionBank = [
   }
 ];
 
+const questionBank = [
+  ["I am a student.", "Soy", "Estoy", "identity", "Soy estudiante."],
+  ["I am from California.", "Soy", "Estoy", "origin", "Soy de California."],
+  ["I am creative.", "Soy", "Estoy", "a characteristic", "Soy creativo/a."],
+  ["I am a teacher.", "Soy", "Estoy", "an occupation", "Soy profesor/a."],
+  ["I am tired.", "Estoy", "Soy", "a temporary condition", "Estoy cansado/a."],
+  ["I am at home.", "Estoy", "Soy", "location", "Estoy en casa."],
+  ["I am happy today.", "Estoy", "Soy", "a current feeling", "Estoy feliz hoy."],
+  ["I am ready.", "Estoy", "Soy", "a current state", "Estoy listo/a."],
+
+  ["You are my friend.", "Eres", "Estás", "identity or a relationship", "Eres mi amigo/a."],
+  ["You are Mexican.", "Eres", "Estás", "nationality", "Eres mexicano/a."],
+  ["You are very patient.", "Eres", "Estás", "a characteristic", "Eres muy paciente."],
+  ["You are an artist.", "Eres", "Estás", "an occupation", "Eres artista."],
+  ["You are at school.", "Estás", "Eres", "location", "Estás en la escuela."],
+  ["You are nervous today.", "Estás", "Eres", "a current feeling", "Estás nervioso/a hoy."],
+  ["You are sick.", "Estás", "Eres", "a temporary condition", "Estás enfermo/a."],
+  ["You are busy right now.", "Estás", "Eres", "a current condition", "Estás ocupado/a ahora."],
+
+  ["He is a doctor.", "Es", "Está", "an occupation", "Él es doctor."],
+  ["She is very kind.", "Es", "Está", "a characteristic", "Ella es muy amable."],
+  ["You are the captain. (formal)", "Es", "Está", "identity or a role", "Usted es el capitán / la capitana."],
+  ["He is from Spain.", "Es", "Está", "origin", "Él es de España."],
+  ["She is in the library.", "Está", "Es", "location", "Ella está en la biblioteca."],
+  ["He is angry right now.", "Está", "Es", "a current feeling", "Él está enojado ahora."],
+  ["You are at the office. (formal)", "Está", "Es", "location", "Usted está en la oficina."],
+  ["She is surprised.", "Está", "Es", "a current feeling", "Ella está sorprendida."],
+
+  ["We are students.", "Somos", "Estamos", "identity", "Somos estudiantes."],
+  ["We are from the United States.", "Somos", "Estamos", "origin", "Somos de los Estados Unidos."],
+  ["We are good friends.", "Somos", "Estamos", "identity or a relationship", "Somos buenos amigos."],
+  ["We are responsible.", "Somos", "Estamos", "a characteristic", "Somos responsables."],
+  ["We are in the classroom.", "Estamos", "Somos", "location", "Estamos en el salón de clases."],
+  ["We are excited today.", "Estamos", "Somos", "a current feeling", "Estamos emocionados/as hoy."],
+  ["We are tired.", "Estamos", "Somos", "a temporary condition", "Estamos cansados/as."],
+  ["We are ready to leave.", "Estamos", "Somos", "a current state", "Estamos listos/as para salir."],
+
+  ["You all are musicians. (Spain)", "Sois", "Estáis", "identity or an occupation", "Sois músicos/as."],
+  ["You all are Spanish. (Spain)", "Sois", "Estáis", "nationality", "Sois españoles/as."],
+  ["You all are very funny. (Spain)", "Sois", "Estáis", "a characteristic", "Sois muy graciosos/as."],
+  ["You all are my neighbors. (Spain)", "Sois", "Estáis", "identity or a relationship", "Sois mis vecinos/as."],
+  ["You all are at the beach. (Spain)", "Estáis", "Sois", "location", "Estáis en la playa."],
+  ["You all are worried. (Spain)", "Estáis", "Sois", "a current feeling", "Estáis preocupados/as."],
+  ["You all are busy now. (Spain)", "Estáis", "Sois", "a current condition", "Estáis ocupados/as ahora."],
+  ["You all are in the kitchen. (Spain)", "Estáis", "Sois", "location", "Estáis en la cocina."],
+
+  ["They are soccer players.", "Son", "Están", "identity", "Ellos son jugadores de fútbol."],
+  ["They are very organized.", "Son", "Están", "a characteristic", "Ellas son muy organizadas."],
+  ["You all are teachers.", "Son", "Están", "an occupation", "Ustedes son profesores/as."],
+  ["They are from Argentina.", "Son", "Están", "origin", "Ellos son de Argentina."],
+  ["They are our cousins.", "Son", "Están", "identity or a relationship", "Ellas son nuestras primas."],
+  ["They are at the park.", "Están", "Son", "location", "Ellos están en el parque."],
+  ["They are calm now.", "Están", "Son", "a current state", "Ellas están tranquilas ahora."],
+  ["You all are at the supermarket.", "Están", "Son", "location", "Ustedes están en el supermercado."],
+  ["They are bored right now.", "Están", "Son", "a current feeling", "Ellos están aburridos ahora."],
+  ["They are sick today.", "Están", "Son", "a temporary condition", "Ellas están enfermas hoy."]
+].map(([prompt, answer, alternative, use, spanish], index) => ({
+  id: index + 1,
+  prompt: `“${prompt}”`,
+  answer,
+  choices: [answer, alternative],
+  explanation: `Use ${answer.toLowerCase()} for ${use}: ${spanish}`
+}));
+
 const QUESTIONS_PER_ROUND = 5;
 
 const questionText = document.querySelector("#question-text");
@@ -345,7 +409,7 @@ function createQuestionSet() {
 }
 
 function randomizeAnswerButtons() {
-  const answers = shuffle(["Soy", "Estoy"]);
+  const answers = shuffle(questions[currentQuestion].choices);
   answerButtons.forEach((button, index) => {
     button.dataset.answer = answers[index];
     button.lastElementChild.textContent = answers[index];
@@ -409,9 +473,9 @@ function showResults() {
   finalScore.textContent = `${score}/${questions.length}`;
 
   if (score === questions.length) {
-    resultMessage.textContent = "Perfect score! You know when to use soy and estoy.";
+    resultMessage.textContent = "Perfect score! You know when to use ser and estar.";
   } else if (score >= 3) {
-    resultMessage.textContent = "Nice work! You are getting the hang of soy and estoy.";
+    resultMessage.textContent = "Nice work! You are getting the hang of ser and estar.";
   } else {
     resultMessage.textContent = "Good practice! Review the tip below, then keep going.";
   }

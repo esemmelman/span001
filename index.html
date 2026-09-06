@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="A five-question Spanish quiz for practicing soy and estoy."
+      content="A five-question Spanish quiz for practicing ser and estar conjugations."
     />
-    <title>Soy or Estoy?</title>
+    <title>Estar or Ser?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,19 +17,21 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="remember-control">
-      <span id="remember-toggle-label">Show Remember</span>
-      <label class="switch" aria-labelledby="remember-toggle-label">
-        <input id="remember-toggle" type="checkbox" checked />
-        <span class="slider" aria-hidden="true"></span>
-      </label>
-    </div>
     <main class="app-shell">
-      <aside id="remember-panel" class="rules-card" aria-labelledby="rules-title">
+      <div class="remember-column">
+        <div class="remember-control">
+          <span id="remember-toggle-label">Show Remember</span>
+          <label class="switch" aria-labelledby="remember-toggle-label">
+            <input id="remember-toggle" type="checkbox" checked />
+            <span class="slider" aria-hidden="true"></span>
+          </label>
+        </div>
+        <aside id="remember-panel" class="rules-card" aria-labelledby="rules-title">
         <p class="eyebrow">REMEMBER</p>
         <h2 id="rules-title">When do I use it?</h2>
         <section class="rule-group soy-rule">
-          <h3>Soy</h3>
+          <h3>Ser</h3>
+          <p class="conjugations">soy · eres · es<br />somos · sois · son</p>
           <ul>
             <li>Identity and names</li>
             <li>Where I am from</li>
@@ -38,7 +40,8 @@
           </ul>
         </section>
         <section class="rule-group estoy-rule">
-          <h3>Estoy</h3>
+          <h3>Estar</h3>
+          <p class="conjugations">estoy · estás · está<br />estamos · estáis · están</p>
           <ul>
             <li>How I feel</li>
             <li>Where I am</li>
@@ -46,12 +49,13 @@
             <li>How I am right now</li>
           </ul>
         </section>
-      </aside>
+        </aside>
+      </div>
       <section class="quiz-card" aria-labelledby="quiz-title">
         <header class="quiz-header">
           <div>
             <p class="eyebrow">SPANISH PRACTICE</p>
-            <h1 id="quiz-title">Soy or Estoy?</h1>
+            <h1 id="quiz-title">Estar or Ser?</h1>
           </div>
           <div class="score-pill" aria-live="polite">
             <span aria-hidden="true">★</span>
