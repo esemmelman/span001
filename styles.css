@@ -19,14 +19,15 @@ body {
   min-height: 100vh;
   margin: 0;
   display: grid;
-  place-items: center;
+  align-items: start;
+  justify-items: center;
   color: var(--ink);
   font-family: "Nunito", system-ui, sans-serif;
   background:
     radial-gradient(circle at 12% 18%, rgba(247, 201, 72, 0.25) 0 80px, transparent 82px),
     radial-gradient(circle at 91% 84%, rgba(238, 114, 95, 0.17) 0 120px, transparent 122px),
     linear-gradient(145deg, #eaf8f5, var(--cream));
-  padding: 86px 18px 32px;
+  padding: 18px 18px 32px;
 }
 
 .remember-control {
@@ -287,12 +288,6 @@ h1 {
   padding: 30px 28px;
 }
 
-.rules-card > h2 {
-  font-size: 2.7rem;
-  line-height: 1.08;
-  margin: 2px 0 26px;
-}
-
 .rule-group + .rule-group { margin-top: 25px; }
 
 .conjugations {
@@ -334,7 +329,7 @@ h1 {
 [hidden] { display: none !important; }
 
 @media (max-width: 560px) {
-  body { padding: 32px 12px 16px; }
+  body { padding: 12px 12px 16px; }
   .quiz-card { border-radius: 22px; padding: 25px 20px 28px; }
   .quiz-header { margin-bottom: 24px; }
   .question-area { margin: 34px auto 26px; }
@@ -354,7 +349,6 @@ h1 {
   .remember-column, .quiz-card { grid-column: 1; }
   .remember-column { left: 0; }
   .quiz-card { left: 0; }
-  .rules-card > h2 { margin-bottom: 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
