@@ -451,7 +451,7 @@ let currentQuestion = 0;
 let score = 0;
 let questions = [];
 let activeModeKey = "serEstar";
-const previousQuestionIds = {};
+const completedQuestionIds = {};
 
 function shuffle(items) {
   const shuffled = [...items];
@@ -464,13 +464,12 @@ function shuffle(items) {
 
 function createQuestionSet() {
   const bank = quizModes[activeModeKey].questions;
-  const previousIds = previousQuestionIds[activeModeKey] || [];
-  let freshQuestions = bank.filter(
-    (question) => !previousIds.includes(question.id)
-  );
-  if (freshQuestions.length < QUESTIONS_PER_ROUND) freshQuestions = bank;
+  const completedIds = completedQuestionIds[activeModeKey] || new Set();
+  const freshQuestions = bank.filter((question) => !completedIds.has(question.id));
   questions = shuffle(freshQuestions).slice(0, QUESTIONS_PER_ROUND);
-  previousQuestionIds[activeModeKey] = questions.map((question) => question.id);
+  questions.forEach((question) => completedIds.add(question.id));
+  completedQuestionIds[activeModeKey] = completedIds;
+  return questions.length > 0;
 }
 
 function randomizeAnswerButtons() {
@@ -525,12 +524,21 @@ function selectQuiz() {
   currentQuestion = 0;
   score = 0;
   scoreDisplay.textContent = "0";
+  restartButton.disabled = false;
   quizTitle.textContent = quizModes[activeModeKey].title;
   resultsScreen.hidden = true;
   quizScreen.hidden = false;
   updateRememberPanel();
-  createQuestionSet();
-  showQuestion();
+  if (createQuestionSet()) showQuestion();
+  else showAllCompleted();
+}
+
+function showAllCompleted() {
+  quizScreen.hidden = true;
+  resultsScreen.hidden = false;
+  finalScore.textContent = "All done";
+  resultMessage.textContent = `You completed every ${quizModes[activeModeKey].title} question without repeats. Select another quiz to continue.`;
+  restartButton.hidden = true;
 }
 
 function showQuestion() {
@@ -588,6 +596,8 @@ function showResults() {
   quizScreen.hidden = true;
   resultsScreen.hidden = false;
   finalScore.textContent = `${score}/${questions.length}`;
+  restartButton.hidden = false;
+  restartButton.disabled = false;
 
   if (score === questions.length) {
     resultMessage.textContent = `Perfect score! You know ${quizModes[activeModeKey].title}.`;
@@ -613,12 +623,15 @@ function goToNextQuestion() {
 function restartQuiz() {
   currentQuestion = 0;
   score = 0;
-  createQuestionSet();
   scoreDisplay.textContent = "0";
   resultsScreen.hidden = true;
   quizScreen.hidden = false;
-  showQuestion();
-  answerButtons[0].focus();
+  if (createQuestionSet()) {
+    showQuestion();
+    answerButtons[0].focus();
+  } else {
+    showAllCompleted();
+  }
 }
 
 nextButton.addEventListener("click", goToNextQuestion);
