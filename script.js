@@ -365,6 +365,59 @@ const questionBank = [
   explanation: `Use ${answer.toLowerCase()} for ${use}: ${spanish}`
 }));
 
+const subjects = [
+  { pronoun: "Yo", forms: { oir: "I hear", ir: "I go", tener: "I have", decir: "I say" } },
+  { pronoun: "Tú", forms: { oir: "You hear", ir: "You go", tener: "You have", decir: "You say" } },
+  { pronoun: "Él", forms: { oir: "He hears", ir: "He goes", tener: "He has", decir: "He says" } },
+  { pronoun: "Nosotros", forms: { oir: "We hear", ir: "We go", tener: "We have", decir: "We say" } },
+  { pronoun: "Vosotros", forms: { oir: "You all hear (Spain)", ir: "You all go (Spain)", tener: "You all have (Spain)", decir: "You all say (Spain)" } },
+  { pronoun: "Ellos", forms: { oir: "They hear", ir: "They go", tener: "They have", decir: "They say" } }
+];
+
+const verbDefinitions = {
+  oir: {
+    title: "Oír",
+    forms: ["Oigo", "Oyes", "Oye", "Oímos", "Oís", "Oyen"],
+    contexts: [["music", "música"], ["the teacher", "al profesor"], ["a noise", "un ruido"]]
+  },
+  ir: {
+    title: "Ir",
+    forms: ["Voy", "Vas", "Va", "Vamos", "Vais", "Van"],
+    contexts: [["to school", "a la escuela"], ["to the park", "al parque"], ["home", "a casa"]]
+  },
+  tener: {
+    title: "Tener",
+    forms: ["Tengo", "Tienes", "Tiene", "Tenemos", "Tenéis", "Tienen"],
+    contexts: [["a book", "un libro"], ["a question", "una pregunta"], ["a dog", "un perro"]]
+  },
+  decir: {
+    title: "Decir",
+    forms: ["Digo", "Dices", "Dice", "Decimos", "Decís", "Dicen"],
+    contexts: [["the truth", "la verdad"], ["hello", "hola"], ["the answer", "la respuesta"]]
+  }
+};
+
+function buildVerbQuestions(key) {
+  const verb = verbDefinitions[key];
+  return subjects.flatMap((subject, subjectIndex) =>
+    verb.contexts.map(([englishEnding, spanishEnding], contextIndex) => ({
+      id: `${key}-${subjectIndex}-${contextIndex}`,
+      prompt: `“${subject.forms[key]} ${englishEnding}.”`,
+      answer: verb.forms[subjectIndex],
+      choices: verb.forms,
+      explanation: `${subject.pronoun} ${verb.forms[subjectIndex].toLowerCase()} ${spanishEnding}.`
+    }))
+  );
+}
+
+const quizModes = {
+  serEstar: { title: "Ser vs. Estar", questions: questionBank },
+  oir: { title: "Oír", questions: buildVerbQuestions("oir") },
+  ir: { title: "Ir", questions: buildVerbQuestions("ir") },
+  tener: { title: "Tener", questions: buildVerbQuestions("tener") },
+  decir: { title: "Decir", questions: buildVerbQuestions("decir") }
+};
+
 const QUESTIONS_PER_ROUND = 5;
 
 const questionText = document.querySelector("#question-text");
@@ -373,7 +426,8 @@ const progressPercent = document.querySelector("#progress-percent");
 const progressBar = document.querySelector("#progress-bar");
 const progressTrack = document.querySelector(".progress-track");
 const scoreDisplay = document.querySelector("#score");
-const answerButtons = [...document.querySelectorAll(".answer-button")];
+const answerOptions = document.querySelector("#answer-options");
+let answerButtons = [];
 const feedback = document.querySelector("#feedback");
 const feedbackTitle = document.querySelector("#feedback-title");
 const feedbackText = document.querySelector("#feedback-text");
@@ -385,11 +439,14 @@ const resultMessage = document.querySelector("#result-message");
 const restartButton = document.querySelector("#restart-button");
 const rememberToggle = document.querySelector("#remember-toggle");
 const rememberPanel = document.querySelector("#remember-panel");
+const topicSelect = document.querySelector("#topic-select");
+const quizTitle = document.querySelector("#quiz-title");
 
 let currentQuestion = 0;
 let score = 0;
 let questions = [];
-let previousQuestionIds = [];
+let activeModeKey = "serEstar";
+const previousQuestionIds = {};
 
 function shuffle(items) {
   const shuffled = [...items];
@@ -401,19 +458,61 @@ function shuffle(items) {
 }
 
 function createQuestionSet() {
-  const freshQuestions = questionBank.filter(
-    (question) => !previousQuestionIds.includes(question.id)
+  const bank = quizModes[activeModeKey].questions;
+  const previousIds = previousQuestionIds[activeModeKey] || [];
+  let freshQuestions = bank.filter(
+    (question) => !previousIds.includes(question.id)
   );
+  if (freshQuestions.length < QUESTIONS_PER_ROUND) freshQuestions = bank;
   questions = shuffle(freshQuestions).slice(0, QUESTIONS_PER_ROUND);
-  previousQuestionIds = questions.map((question) => question.id);
+  previousQuestionIds[activeModeKey] = questions.map((question) => question.id);
 }
 
 function randomizeAnswerButtons() {
   const answers = shuffle(questions[currentQuestion].choices);
-  answerButtons.forEach((button, index) => {
-    button.dataset.answer = answers[index];
-    button.lastElementChild.textContent = answers[index];
+  answerOptions.innerHTML = "";
+  answers.forEach((answer) => {
+    const button = document.createElement("button");
+    button.className = "answer-button";
+    button.type = "button";
+    button.dataset.answer = answer;
+    const label = document.createElement("span");
+    label.textContent = answer;
+    button.append(label);
+    button.addEventListener("click", chooseAnswer);
+    answerOptions.append(button);
   });
+  answerButtons = [...answerOptions.querySelectorAll(".answer-button")];
+}
+
+function updateRememberPanel() {
+  if (activeModeKey === "serEstar") {
+    rememberPanel.innerHTML = `
+      <section class="rule-group soy-rule"><h3>Ser</h3><p class="conjugations">soy · eres · es<br>somos · sois · son</p><ul><li>Identity and names</li><li>Where I am from</li><li>Jobs and roles</li><li>Lasting traits</li></ul></section>
+      <section class="rule-group estoy-rule"><h3>Estar</h3><p class="conjugations">estoy · estás · está<br>estamos · estáis · están</p><ul><li>How I feel</li><li>Where I am</li><li>Temporary conditions</li><li>How I am right now</li></ul></section>`;
+    return;
+  }
+
+  const verb = verbDefinitions[activeModeKey];
+  rememberPanel.innerHTML = `
+    <section class="rule-group estoy-rule single-verb-rule">
+      <h3>${verb.title}</h3>
+      <p class="conjugations">${verb.forms.slice(0, 3).map((form) => form.toLowerCase()).join(" · ")}<br>${verb.forms.slice(3).map((form) => form.toLowerCase()).join(" · ")}</p>
+      <ul><li>yo</li><li>tú</li><li>él / ella / usted</li><li>nosotros</li><li>vosotros</li><li>ellos / ustedes</li></ul>
+    </section>`;
+}
+
+function selectQuiz() {
+  activeModeKey = topicSelect.value;
+  currentQuestion = 0;
+  score = 0;
+  scoreDisplay.textContent = "0";
+  quizTitle.textContent = quizModes[activeModeKey].title;
+  resultsScreen.hidden = true;
+  quizScreen.hidden = false;
+  updateRememberPanel();
+  createQuestionSet();
+  showQuestion();
 }
 
 function showQuestion() {
@@ -473,9 +572,9 @@ function showResults() {
   finalScore.textContent = `${score}/${questions.length}`;
 
   if (score === questions.length) {
-    resultMessage.textContent = "Perfect score! You know when to use ser and estar.";
+    resultMessage.textContent = `Perfect score! You know ${quizModes[activeModeKey].title}.`;
   } else if (score >= 3) {
-    resultMessage.textContent = "Nice work! You are getting the hang of ser and estar.";
+    resultMessage.textContent = `Nice work! You are getting the hang of ${quizModes[activeModeKey].title}.`;
   } else {
     resultMessage.textContent = "Good practice! Review the tip below, then keep going.";
   }
@@ -504,9 +603,9 @@ function restartQuiz() {
   answerButtons[0].focus();
 }
 
-answerButtons.forEach((button) => button.addEventListener("click", chooseAnswer));
 nextButton.addEventListener("click", goToNextQuestion);
 restartButton.addEventListener("click", restartQuiz);
+topicSelect.addEventListener("change", selectQuiz);
 rememberToggle.addEventListener("change", () => {
   const isHidden = !rememberToggle.checked;
   rememberPanel.classList.toggle("is-hidden", isHidden);

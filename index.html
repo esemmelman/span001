@@ -7,7 +7,7 @@
       name="description"
       content="A five-question Spanish quiz for practicing ser and estar conjugations."
     />
-    <title>Estar or Ser?</title>
+    <title>Spanish Verb Practice</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -53,7 +53,7 @@
         <header class="quiz-header">
           <div>
             <p class="eyebrow">SPANISH PRACTICE</p>
-            <h1 id="quiz-title">Estar or Ser?</h1>
+            <h1 id="quiz-title">Ser vs. Estar</h1>
           </div>
           <div class="score-pill" aria-live="polite">
             <span aria-hidden="true">★</span>
@@ -116,7 +116,16 @@
           </button>
         </div>
       </section>
-
+      <aside class="topic-card">
+        <label for="topic-select">Choose a quiz</label>
+        <select id="topic-select" size="5" aria-label="Choose a verb quiz">
+          <option value="serEstar" selected>Ser vs. Estar</option>
+          <option value="oir">Oír</option>
+          <option value="ir">Ir</option>
+          <option value="tener">Tener</option>
+          <option value="decir">Decir</option>
+        </select>
+      </aside>
     </main>
     <script src="script.js"></script>
   </body>
