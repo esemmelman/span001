@@ -128,14 +128,20 @@ button { font: inherit; }
   border-radius: 14px;
   color: var(--ink);
   font-family: "Baloo 2", system-ui, sans-serif;
-  font-size: 2.05rem;
+  font-size: 2.6rem;
   font-weight: 800;
   overflow: hidden;
   padding: 8px;
   width: 100%;
 }
 
-.topic-card option { border-radius: 9px; cursor: pointer; padding: 10px 12px; }
+.topic-card option {
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 2.6rem;
+  font-weight: 800;
+  padding: 12px 14px;
+}
 .topic-card option:checked { background: linear-gradient(var(--teal), var(--teal)); color: white; }
 
 .version-number {
