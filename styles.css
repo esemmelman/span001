@@ -80,8 +80,8 @@ button { font: inherit; }
   align-items: start;
   display: grid;
   column-gap: 90px;
-  grid-template-columns: minmax(400px, 440px) minmax(600px, 760px) minmax(400px, 440px);
-  width: min(100%, 1820px);
+  grid-template-columns: minmax(440px, 500px) minmax(600px, 760px) minmax(360px, 400px);
+  width: min(100%, 1840px);
 }
 
 .remember-column {
@@ -137,6 +137,14 @@ button { font: inherit; }
 
 .topic-card option { border-radius: 9px; cursor: pointer; padding: 10px 12px; }
 .topic-card option:checked { background: linear-gradient(var(--teal), var(--teal)); color: white; }
+
+.version-number {
+  color: var(--muted);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 16px 4px 0;
+  text-align: right;
+}
 
 .quiz-card {
   background: rgba(255, 255, 255, 0.96);
@@ -353,7 +361,7 @@ h1 {
   line-height: 1.15;
   margin: 7px 0;
   padding-left: 8px;
-  white-space: nowrap;
+  overflow-wrap: break-word;
 }
 
 .soy-rule li::marker { color: var(--coral); }
