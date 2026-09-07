@@ -378,21 +378,25 @@ const verbDefinitions = {
   oir: {
     title: "Oír",
     forms: ["Oigo", "Oyes", "Oye", "Oímos", "Oís", "Oyen"],
+    notes: ["The yo form is irregular: oigo.", "Oímos and oís need accent marks."],
     contexts: [["music", "música"], ["the teacher", "al profesor"], ["a noise", "un ruido"]]
   },
   ir: {
     title: "Ir",
     forms: ["Voy", "Vas", "Va", "Vamos", "Vais", "Van"],
+    notes: ["All present-tense forms of ir are irregular.", "Use a + place to say where someone is going."],
     contexts: [["to school", "a la escuela"], ["to the park", "al parque"], ["home", "a casa"]]
   },
   tener: {
     title: "Tener",
     forms: ["Tengo", "Tienes", "Tiene", "Tenemos", "Tenéis", "Tienen"],
+    notes: ["The yo form is irregular: tengo.", "The stem changes e → ie except in nosotros and vosotros."],
     contexts: [["a book", "un libro"], ["a question", "una pregunta"], ["a dog", "un perro"]]
   },
   decir: {
     title: "Decir",
     forms: ["Digo", "Dices", "Dice", "Decimos", "Decís", "Dicen"],
+    notes: ["The yo form is irregular: digo.", "The stem changes e → i except in nosotros and vosotros."],
     contexts: [["the truth", "la verdad"], ["hello", "hola"], ["the answer", "la respuesta"]]
   }
 };
@@ -402,6 +406,7 @@ function buildVerbQuestions(key) {
   return subjects.flatMap((subject, subjectIndex) =>
     verb.contexts.map(([englishEnding, spanishEnding], contextIndex) => ({
       id: `${key}-${subjectIndex}-${contextIndex}`,
+      verbKey: key,
       prompt: `“${subject.forms[key]} ${englishEnding}.”`,
       answer: verb.forms[subjectIndex],
       choices: verb.forms,
@@ -469,7 +474,19 @@ function createQuestionSet() {
 }
 
 function randomizeAnswerButtons() {
-  const answers = shuffle(questions[currentQuestion].choices);
+  const question = questions[currentQuestion];
+  let answers;
+
+  if (activeModeKey === "serEstar") {
+    answers = shuffle(question.choices);
+  } else {
+    const currentForms = verbDefinitions[activeModeKey].forms;
+    const sameVerbChoice = shuffle(currentForms.filter((form) => form !== question.answer))[0];
+    const otherVerbKeys = Object.keys(verbDefinitions).filter((key) => key !== activeModeKey);
+    const otherVerbKey = shuffle(otherVerbKeys)[0];
+    const otherVerbChoices = shuffle(verbDefinitions[otherVerbKey].forms).slice(0, 2);
+    answers = shuffle([question.answer, sameVerbChoice, ...otherVerbChoices]);
+  }
   answerOptions.innerHTML = "";
   answers.forEach((answer) => {
     const button = document.createElement("button");
@@ -494,11 +511,12 @@ function updateRememberPanel() {
   }
 
   const verb = verbDefinitions[activeModeKey];
+  const noteItems = verb.notes.map((note) => `<li>${note}</li>`).join("");
   rememberPanel.innerHTML = `
     <section class="rule-group estoy-rule single-verb-rule">
       <h3>${verb.title}</h3>
       <p class="conjugations">${verb.forms.slice(0, 3).map((form) => form.toLowerCase()).join(" · ")}<br>${verb.forms.slice(3).map((form) => form.toLowerCase()).join(" · ")}</p>
-      <ul><li>yo</li><li>tú</li><li>él / ella / usted</li><li>nosotros</li><li>vosotros</li><li>ellos / ustedes</li></ul>
+      ${noteItems ? `<ul>${noteItems}</ul>` : ""}
     </section>`;
 }
 
