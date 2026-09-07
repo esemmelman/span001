@@ -102,7 +102,7 @@ button { font: inherit; }
 .quiz-card {
   grid-column: 2;
   position: relative;
-  left: 35px;
+  left: 20px;
 }
 
 .topic-card {
